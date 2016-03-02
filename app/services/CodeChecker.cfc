@@ -4,8 +4,10 @@
 
 	<cffunction name="init" access="public" output="false" returntype="any" hint="I initialize the component.">
 		<cfscript>
-			variables.results = [];
+			variables.results = {};
+			variables.stats = {};
 			variables.objRules = new Rules();
+			variables.objCheckLines = new services.CheckLines();
 			variables.rules = variables.objRules.get();
 			return this;
 		</cfscript>
@@ -23,7 +25,7 @@
 		<cfreturn true />
     </cffunction>
 
-    <cffunction name="startCodeReview" access="public" returntype="array" output="false" hint="I start the code review.">
+    <cffunction name="startCodeReview" access="public" returntype="struct" output="false" hint="I start the code review.">
 		<cfargument name="filepath" type="string" required="true" hint="I am the directory or file path for which to review." />
 		<cfargument name="recurse" type="boolean" required="false" default="true" hint="I determine whether or not to review recursively." />
 
@@ -170,11 +172,35 @@
 	</cffunction>
 
     <cffunction name="recordResult" access="public" returntype="void" output="false" hint="I record the result of the code review.">
-		<cfset ArrayAppend(variables.results, arguments)>
+		<cfif NOT StructKeyExists(variables.results,arguments.directory)>
+			<cfset variables.results[arguments.directory] = {}>
+		</cfif>
+		<cfif NOT StructKeyExists(variables.results[arguments.directory], arguments.file)>
+			<cfset variables.results[arguments.directory][arguments.file] = []>
+		</cfif>
+
+		<cfset arguments.lines = variables.objCheckLines.readLines(
+			path = arguments.directory & arguments.file,
+			from = arguments.linenumber,
+			length = 10
+		)>
+
+		<cfset ArrayAppend(variables.results[arguments.directory][arguments.file], arguments)>
+
+		<cfif NOT StructKeyExists(variables.stats,arguments.rule)>
+			<cfset variables.stats[arguments.rule] = { count = 0} >
+		</cfif>
+
+		<cfset variables.stats[arguments.rule].count++>
+
 	</cffunction>
 
 	<cffunction name="getResults" access="public" output="false" returntype="any" hint="I return the results.">
 		<cfreturn variables.results />
+	</cffunction>
+
+	<cffunction name="getStats" access="public" output="false" returntype="any" hint="I return the stats.">
+		<cfreturn variables.stats />
 	</cffunction>
 
 	<cffunction name="onMissingMethod" hint="I catch it if someone passes in a bad method name.">

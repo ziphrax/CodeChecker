@@ -18,5 +18,6 @@
 </cfloop>
 
 <cfset session.results = variables.objCodeChecker.getResults()>
+<cfset session.stats = variables.objCodeChecker.getStats()>
 
-<cflocation url="../view/dsp_codechecker.cfm">
+<cflocation url="../view/dsp_codechecker.cfm" addtoken="false">

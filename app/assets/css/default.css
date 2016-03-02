@@ -1,0 +1,18 @@
+.text-justify {
+  text-align: justify;
+}
+.clickable{
+    cursor: pointer;
+}
+thead, tbody {
+    width:100%;
+}
+.ace_scrollbar {
+    display: none !important;
+}
+
+.ace_highlight-marker {
+   position: absolute; /* without this positions will be erong */
+   background: #abc; /* color */
+   z-index: 1000; /* in front of all other markers */
+}

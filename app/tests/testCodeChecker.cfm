@@ -90,7 +90,7 @@
 	<cflock scope="session" type="exclusive" timeout="15">
 	</cflock>
 </cflock>
-<cflocation url="">
+<cflocation url="" addtoken="false">
 <cfset newArray = ArrayNew()>
 <cfset newArray1 = ArrayNew(1)>
 <cfscript>
